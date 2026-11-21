@@ -1,0 +1,56 @@
+[
+  {
+    "_id": {
+      "$oid": "6ac23072deb8abf47cd22d10"
+    },
+    "owner_id": 1,
+    "name": "Jan Novak",
+    "country": "Czech Republic",
+    "phone": "+420 601 111 111"
+  },
+  {
+    "_id": {
+      "$oid": "6ac23072deb8abf47cd22d11"
+    },
+    "owner_id": 2,
+    "name": "Emma Johnson",
+    "country": "United Kingdom",
+    "phone": "+44 7700 900123"
+  },
+  {
+    "_id": {
+      "$oid": "6ac23072deb8abf47cd22d12"
+    },
+    "owner_id": 3,
+    "name": "Petr Svoboda",
+    "country": "Czech Republic",
+    "phone": "+420 602 222 222"
+  },
+  {
+    "_id": {
+      "$oid": "6ac23072deb8abf47cd22d13"
+    },
+    "owner_id": 4,
+    "name": "Lucas Meyer",
+    "country": "Germany",
+    "phone": "+49 151 2345678"
+  },
+  {
+    "_id": {
+      "$oid": "6ac23072deb8abf47cd22d14"
+    },
+    "owner_id": 5,
+    "name": "Sofia Rossi",
+    "country": "Italy",
+    "phone": "+39 333 1234567"
+  },
+  {
+    "_id": {
+      "$oid": "6ac23072deb8abf47cd22d15"
+    },
+    "owner_id": 6,
+    "name": "Hiroshi Tanaka",
+    "country": "Japan",
+    "phone": "+81 90 1234 5678"
+  }
+]

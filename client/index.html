@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Car Management</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+    header { background: #1f3a5f; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 20px; }
+    header a { color: #fff; text-decoration: none; }
+    main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+    .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .bar input { flex: 1; min-width: 200px; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #bbb; border-radius: 6px; font-size: 15px; font-family: inherit; }
+    button { padding: 10px 16px; border: none; border-radius: 6px; background: #1f6feb; color: #fff; font-size: 15px; cursor: pointer; margin-right: 6px; }
+    button.secondary { background: #6b7280; }
+    button.green { background: #1a7f37; }
+    button.red { background: #c62828; }
+    table.list { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+    table.list th { background: #e8eef7; }
+    table.list tbody tr { cursor: pointer; }
+    table.list tbody tr:hover { background: #eef5ff; }
+    table.info th { width: 130px; background: none; color: #555; }
+    .cols { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+    @media (max-width: 700px) { .cols { grid-template-columns: 1fr; } }
+    .card { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .card h3 { margin-top: 0; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-weight: bold; margin-bottom: 4px; }
+    .actions { margin-top: 16px; }
+    #msg { color: #555; min-height: 22px; }
+    .error { color: #b42318; }
+    .ok { color: #1a7f37; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Car Management</h1>
+    <a href="#/">Home</a>
+  </header>
+  <main id="app"></main>
+
+  <script>
+    const API = "http://localhost:3000";
+    const app = document.getElementById("app");
+
+    function esc(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (c) => (
+        { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+      ));
+    }
+
+    // one helper for every API call
+    async function api(path, options) {
+      const res = await fetch(API + path, options);
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* no JSON body */ }
+      return { ok: res.ok, status: res.status, data };
+    }
+
+    // ================= HOME SCREEN =================
+    function showHome() {
+      app.innerHTML = `
+        <h2>Cars</h2>
+        <div class="bar">
+          <input id="q" type="text" placeholder="Search by brand, model or description...">
+          <button id="searchBtn">Search</button>
+          <button id="clearBtn" class="secondary">Show all</button>
+          <button id="newBtn" class="green">+ New Car</button>
+        </div>
+        <p id="msg"></p>
+        <table class="list">
+          <thead>
+            <tr><th>ID</th><th>Brand</th><th>Model</th><th>Year</th><th>Price</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>`;
+
+      const input = document.getElementById("q");
+      document.getElementById("searchBtn").onclick = () => loadCars(input.value.trim());
+      input.onkeydown = (e) => { if (e.key === "Enter") loadCars(input.value.trim()); };
+      document.getElementById("clearBtn").onclick = () => { input.value = ""; loadCars(""); };
+      document.getElementById("newBtn").onclick = () => { location.hash = "#/new"; };
+
+      loadCars("");
+    }
+
+    async function loadCars(query) {
+      const msg = document.getElementById("msg");
+      const rows = document.getElementById("rows");
+      msg.className = "";
+      msg.textContent = "Loading...";
+      rows.innerHTML = "";
+
+      try {
+        const path = query ? "/cars/search?query=" + encodeURIComponent(query) : "/cars";
+        const r = await api(path);
+        if (!r.ok) throw new Error(r.data?.error || "Request failed");
+
+        if (r.data.length === 0) {
+          msg.textContent = query ? `No cars found for "${query}".` : "No cars in the database.";
+          return;
+        }
+        msg.textContent = `Showing ${r.data.length} car(s).`;
+
+        r.data.forEach((car) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${esc(car.car_id)}</td>
+            <td>${esc(car.brand)}</td>
+            <td>${esc(car.model)}</td>
+            <td>${esc(car.year)}</td>
+            <td>${esc(car.price)}</td>`;
+          tr.onclick = () => { location.hash = "#/car/" + car.car_id; };
+          rows.appendChild(tr);
+        });
+      } catch (err) {
+        msg.className = "error";
+        msg.textContent = "Could not load cars: " + err.message + " (is the API running?)";
+      }
+    }
+
+    // ================= DETAILS: existing car =================
+    function ownerHtml(owner) {
+      if (!owner) return "<p>Owner not found.</p>";
+      return `
+        <table class="info">
+          <tr><th>Owner ID</th><td>${esc(owner.owner_id)}</td></tr>
+          <tr><th>Name</th><td>${esc(owner.name)}</td></tr>
+          <tr><th>Country</th><td>${esc(owner.country)}</td></tr>
+          <tr><th>Phone</th><td>${esc(owner.phone)}</td></tr>
+        </table>`;
+    }
+
+    function showError(message) {
+      app.innerHTML = `
+        <h2>Car Details</h2>
+        <p class="error">${esc(message)}</p>
+        <button class="secondary" id="backBtn">Back to Home</button>`;
+      document.getElementById("backBtn").onclick = () => { location.hash = "#/"; };
+    }
+
+    async function showCar(id) {
+      app.innerHTML = "<p>Loading...</p>";
+      try {
+        const carRes = await api("/cars/" + encodeURIComponent(id));
+        if (!carRes.ok) return showError(carRes.data?.error || "Car not found");
+        const car = carRes.data;
+
+        // use the relationship field (owner_id) to get the related owner
+        const ownerRes = await api("/owners/" + car.owner_id);
+        renderCar(car, ownerRes.ok ? ownerRes.data : null);
+      } catch (err) {
+        showError("Could not reach the API: " + err.message);
+      }
+    }
+
+    function renderCar(car, owner) {
+      app.innerHTML = `
+        <h2>Car Details</h2>
+        <div class="cols">
+          <div class="card">
+            <table class="info">
+              <tr><th>Car ID</th><td>${esc(car.car_id)}</td></tr>
+              <tr><th>Brand</th><td>${esc(car.brand)}</td></tr>
+              <tr><th>Model</th><td>${esc(car.model)}</td></tr>
+              <tr><th>Year</th><td>${esc(car.year)}</td></tr>
+              <tr><th>Price</th><td>${esc(car.price)}</td></tr>
+              <tr><th>Owner ID</th><td>${esc(car.owner_id)}</td></tr>
+              <tr><th>Description</th><td>${esc(car.description)}</td></tr>
+            </table>
+            <p id="msg" class="error"></p>
+            <div class="actions">
+              <button id="editBtn">Edit</button>
+              <button id="deleteBtn" class="red">Delete</button>
+              <button id="backBtn" class="secondary">Back to Home</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Owner Information</h3>
+            ${ownerHtml(owner)}
+          </div>
+        </div>`;
+
+      document.getElementById("backBtn").onclick = () => { location.hash = "#/"; };
+      document.getElementById("editBtn").onclick = () => renderForm(car, owner);
+      document.getElementById("deleteBtn").onclick = async () => {
+        if (!confirm(`Delete ${car.brand} ${car.model}?`)) return;
+        const r = await api("/cars/" + car.car_id, { method: "DELETE" });
+        if (r.ok) location.hash = "#/";          // back to Home, which reloads the list
+        else document.getElementById("msg").textContent = r.data?.error || "Delete failed";
+      };
+    }
+
+    // ================= DETAILS: new car / edit form =================
+    function renderForm(car, owner) {
+      const isNew = !car;                         // new mode = no existing record
+      const c = car || { brand: "", model: "", year: "", price: "", owner_id: "", description: "" };
+
+      app.innerHTML = `
+        <h2>${isNew ? "New Car" : "Edit Car (id " + esc(car.car_id) + ")"}</h2>
+        <div class="cols">
+          <div class="card">
+            <div class="field"><label>Brand *</label><input id="f_brand" value="${esc(c.brand)}"></div>
+            <div class="field"><label>Model *</label><input id="f_model" value="${esc(c.model)}"></div>
+            <div class="field"><label>Year *</label><input id="f_year" type="number" value="${esc(c.year)}"></div>
+            <div class="field"><label>Price *</label><input id="f_price" type="number" value="${esc(c.price)}"></div>
+            <div class="field"><label>Owner ID *</label><input id="f_owner" type="number" value="${esc(c.owner_id)}"></div>
+            <div class="field"><label>Description *</label><textarea id="f_desc" rows="3">${esc(c.description)}</textarea></div>
+            <p id="msg" class="error"></p>
+            <div class="actions">
+              <button id="saveBtn" class="green">Save</button>
+              <button id="cancelBtn" class="secondary">Cancel</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Owner Information</h3>
+            <div id="ownerBox">${owner ? ownerHtml(owner) : "<p>Enter an Owner ID and click Load Owner.</p>"}</div>
+            <button id="loadOwnerBtn">Load Owner</button>
+          </div>
+        </div>`;
+
+      const msg = document.getElementById("msg");
+
+      document.getElementById("loadOwnerBtn").onclick = async () => {
+        const id = document.getElementById("f_owner").value;
+        const r = await api("/owners/" + encodeURIComponent(id));
+        document.getElementById("ownerBox").innerHTML = r.ok ? ownerHtml(r.data) : "<p>Owner not found.</p>";
+      };
+
+      document.getElementById("cancelBtn").onclick = () => {
+        if (isNew) location.hash = "#/";
+        else renderCar(car, owner);
+      };
+
+      document.getElementById("saveBtn").onclick = async () => {
+        const body = {
+          brand: document.getElementById("f_brand").value.trim(),
+          model: document.getElementById("f_model").value.trim(),
+          year: Number(document.getElementById("f_year").value),
+          price: Number(document.getElementById("f_price").value),
+          owner_id: Number(document.getElementById("f_owner").value),
+          description: document.getElementById("f_desc").value.trim(),
+        };
+        if (!body.brand || !body.model || !body.description ||
+            !document.getElementById("f_year").value ||
+            !document.getElementById("f_price").value ||
+            !document.getElementById("f_owner").value) {
+          msg.textContent = "Please fill in all fields.";
+          return;
+        }
+
+        const r = await api(isNew ? "/cars" : "/cars/" + car.car_id, {
+          method: isNew ? "POST" : "PUT",         // New -> POST, Edit -> PUT
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (r.ok) location.hash = "#/";           // back to Home, which reloads the list
+        else msg.textContent = r.data?.error || "Save failed";
+      };
+    }
+
+    // ================= simple router =================
+    function route() {
+      const hash = location.hash;
+      if (hash.startsWith("#/car/")) showCar(hash.split("/")[2]);
+      else if (hash === "#/new") renderForm(null, null);
+      else showHome();
+    }
+    window.addEventListener("hashchange", route);
+    route();
+  </script>
+</body>
+</html>

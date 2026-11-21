@@ -1,0 +1,146 @@
+[
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d18"
+    },
+    "car_id": 1,
+    "brand": "Toyota",
+    "model": "Corolla",
+    "year": 2020,
+    "price": 18500,
+    "owner_id": 1,
+    "description": "A reliable family sedan with low fuel consumption and a spacious interior."
+  },
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d19"
+    },
+    "car_id": 2,
+    "brand": "Tesla",
+    "model": "Model 3",
+    "year": 2022,
+    "price": 42000,
+    "owner_id": 2,
+    "description": "A fast electric car with long range, autopilot features, and a minimalist interior."
+  },
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d1a"
+    },
+    "car_id": 3,
+    "brand": "Skoda",
+    "model": "Octavia",
+    "year": 2019,
+    "price": 16500,
+    "owner_id": 3,
+    "description": "A practical family estate car with a large trunk and efficient diesel engine."
+  },
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d1b"
+    },
+    "car_id": 4,
+    "brand": "BMW",
+    "model": "M3",
+    "year": 2021,
+    "price": 72000,
+    "owner_id": 4,
+    "description": "A powerful sports sedan with a twin-turbo engine and sharp handling."
+  },
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d1c"
+    },
+    "car_id": 5,
+    "brand": "Nissan",
+    "model": "Leaf",
+    "year": 2021,
+    "price": 27000,
+    "owner_id": 2,
+    "description": "A compact electric hatchback for city driving with low running costs."
+  },
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d1d"
+    },
+    "car_id": 6,
+    "brand": "Volkswagen",
+    "model": "Golf",
+    "year": 2018,
+    "price": 14500,
+    "owner_id": 5,
+    "description": "A popular compact hatchback that is comfortable, economical, and easy to drive."
+  },
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d1e"
+    },
+    "car_id": 7,
+    "brand": "Ford",
+    "model": "Mustang",
+    "year": 2020,
+    "price": 55000,
+    "owner_id": 4,
+    "description": "An iconic American sports car with a V8 engine and strong acceleration."
+  },
+  {
+    "_id": {
+      "$oid": "6ac23094deb8abf47cd22d1f"
+    },
+    "car_id": 8,
+    "brand": "Toyota",
+    "model": "Prius",
+    "year": 2019,
+    "price": 21000,
+    "owner_id": 6,
+    "description": "A hybrid family car with excellent fuel economy and low emissions."
+  },
+  {
+    "_id": {
+      "$oid": "6ae9d0d5e3218d44f154d5f0"
+    },
+    "car_id": 9,
+    "brand": "Honda",
+    "model": "Civic",
+    "year": 2021,
+    "price": 23000,
+    "owner_id": 1,
+    "description": "A sporty compact sedan with good fuel economy."
+  },
+  {
+    "_id": {
+      "$oid": "6ae9d465e218fb37b42c3bba"
+    },
+    "car_id": 10,
+    "brand": "Hyundai",
+    "model": "Ioniq 5",
+    "year": 2022,
+    "price": 39000,
+    "owner_id": 3,
+    "description": "A modern electric crossover with fast charging, a spacious cabin, and a long driving range."
+  },
+  {
+    "_id": {
+      "$oid": "6ae9d476e218fb37b42c3bbb"
+    },
+    "car_id": 11,
+    "brand": "Kia",
+    "model": "EV6",
+    "year": 2023,
+    "price": 46000,
+    "owner_id": 5,
+    "description": "A sporty electric SUV with strong acceleration, a roomy interior, and ultra-fast charging."
+  },
+  {
+    "_id": {
+      "$oid": "6ae9d480e218fb37b42c3bbc"
+    },
+    "car_id": 12,
+    "brand": "Renault",
+    "model": "Zoe",
+    "year": 2021,
+    "price": 17500,
+    "owner_id": 1,
+    "description": "A small electric hatchback that is cheap to run and ideal for city driving."
+  }
+]
